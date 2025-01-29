@@ -146,7 +146,7 @@ function getEmployeeArray(&$employeesArray, $userGroup, &$errors)
 	} else {
 		$sql .= " ORDER BY u.lastname ASC, u.firstname ASC";
 	}
-print $sql;
+
 	$resql = $db->query($sql);
 
 	if (!$resql) {
