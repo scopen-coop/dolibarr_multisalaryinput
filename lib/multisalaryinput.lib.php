@@ -110,26 +110,24 @@ function getEmployeeArray(&$employeesArray, $userGroup, &$errors)
 	// Forge request to select users
 	$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname";
 
-	if (!empty(isModEnabled('multicompany')) && $conf->entity == 1 && $user->admin && !$user->entity) {
+	if (!empty(isModEnabled('multicompany'))) {
 		$sql .= ", e.label";
 	}
 
 	$sql .= " FROM " . MAIN_DB_PREFIX . "user as u";
 
-	if (!empty(isModEnabled('multicompany')) && $conf->entity == 1 && $user->admin && !$user->entity) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entity as e ON e.rowid = u.entity";
-		$sql .= " WHERE u.entity IS NOT NULL";
-	} else {
-		if (!empty(isModEnabled('multicompany')) && !empty(getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))) {
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "usergroup_user as ug";
-			$sql .= " ON ug.fk_user = u.rowid";
-			$sql .= " AND ug.entity = " . $conf->entity;
-			if ($userGroup > 0) {
-				$sql .= " AND ug.fk_usergroup = " . (int)$userGroup;
-			}
-		} else {
-			$sql .= " WHERE u.entity IN (0, " . $conf->entity . ")";
+	if (!empty(isModEnabled('multicompany'))) {
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "entity as e ON e.rowid = u.entity";
+	}
+	if (!empty(isModEnabled('multicompany')) && !empty(getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))) {
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "usergroup_user as ug";
+		$sql .= " ON ug.fk_user = u.rowid";
+		$sql .= " AND ug.entity = " . $conf->entity;
+		if ($userGroup > 0) {
+			$sql .= " AND ug.fk_usergroup = " . (int)$userGroup;
 		}
+	} else {
+		$sql .= " WHERE u.entity IN (0, " . $conf->entity . ")";
 	}
 
 	$sql .= " AND COALESCE(u.employee,0) <> 0";
@@ -148,7 +146,7 @@ function getEmployeeArray(&$employeesArray, $userGroup, &$errors)
 	} else {
 		$sql .= " ORDER BY u.lastname ASC, u.firstname ASC";
 	}
-
+print $sql;
 	$resql = $db->query($sql);
 
 	if (!$resql) {
