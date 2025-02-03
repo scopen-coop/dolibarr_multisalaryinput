@@ -117,7 +117,7 @@ function getEmployeeArray(&$employeesArray, $userGroup, &$errors)
 	$sql .= " FROM " . MAIN_DB_PREFIX . "user as u";
 
 	if (!empty(isModEnabled('multicompany'))) {
-		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "entity as e ON e.rowid = u.entity";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "entity as e ON (e.rowid = u.entity OR u.entity=0)";
 	}
 	if (!empty(isModEnabled('multicompany')) && !empty(getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))) {
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "usergroup_user as ug";
